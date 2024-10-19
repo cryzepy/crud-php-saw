@@ -41,6 +41,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <script>
+      const is_production = true;
       class API {
         constructor(baseURL) {
           this.baseURL = baseURL;
@@ -55,6 +56,7 @@
               const { data } = response;
               writeDataToTable(data);
             },
+            error: (err) => writeDataToTable([]),
           });
         }
 
@@ -76,7 +78,7 @@
                 },
               }).fire({
                 icon: "success",
-                title: `Sukses menambahkan ${name} ke database`,
+                text: `Sukses menambahkan ${name} ke database`
               });
 
               $("#user_name").val("");
@@ -125,7 +127,7 @@
         }
 
         update(id_target, new_name) {
-            console.log(id_target)
+          console.log(id_target);
           $.ajax({
             url: `${this.baseURL}/api/update.php`,
             method: "POST",
@@ -158,7 +160,7 @@
         }
       }
 
-      const api = new API("http://localhost:8000");
+      const api = new API(is_production ? "" : "http://localhost:8000");
 
       $(function () {
         let mode_add = true;
@@ -192,8 +194,8 @@
           return;
         }
 
-        const table = $(`<table class="table">
-                <thead>
+        const table = $(`<table class="table table-bordered align-middle">
+                <thead class="table-secondary">
                   <tr>
                     <th scope="col">No</th>
                     <th scope="col">User</th>
@@ -208,9 +210,10 @@
 
         users.forEach((user, index) => {
           const row = `<tr>
-                    <th scope="row">${index + 1}</th>
-                    <td>${user.name}</td>
-                    <td class="d-flex gap-3">
+                    <th scope="row" class="text-center">${index + 1}</th>
+
+                    <td class="text-break">${user.name}</td>
+                    <td class="d-flex gap-3 p-2">
                       <button class="btn btn-danger d-flex gap-2 delete-user" data-id="${
                         user.id
                       }" data-name="${user.name}">
@@ -218,8 +221,8 @@
                           <span>delete</span>
                       </button>
                         <button type="submit" class="btn btn-warning d-flex gap-2 update-user" data-id="${
-                        user.id
-                      }" data-name="${user.name}">
+                          user.id
+                        }" data-name="${user.name}">
                           <i class="bi bi-pencil-square"></i>
                           <span>update</span>
                           </button>
@@ -260,8 +263,8 @@
             inputValidator: (value) => {
               if (!value.trim()) {
                 return "masukkan nama dengan benar";
-              } else if(value == name){
-                return "nama harus berbeda dengan sebelumnya"
+              } else if (value == name) {
+                return "nama harus berbeda dengan sebelumnya";
               }
             },
           });
